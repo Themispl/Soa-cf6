@@ -47,12 +47,19 @@ public class UserDitails extends AbstractEntity implements IdentifiableEntity{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserDitails that)) return false;
-        return Objects.equals(firstname, that.firstname) && Objects.equals(lastname, that.lastname);
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserDitails that = (UserDitails) o;
+
+        if (getFirstname() != null ? !getFirstname().equals(that.getFirstname()) : that.getFirstname() != null)
+            return false;
+        return getLastname() != null ? getLastname().equals(that.getLastname()) : that.getLastname() == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstname, lastname);
+        int result = getFirstname() != null ? getFirstname().hashCode() : 0;
+        result = 31 * result + (getLastname() != null ? getLastname().hashCode() : 0);
+        return result;
     }
 }
