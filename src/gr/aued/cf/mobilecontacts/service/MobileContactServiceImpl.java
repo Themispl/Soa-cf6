@@ -55,7 +55,8 @@ public class MobileContactServiceImpl  implements IMobileContactService{
     }
 
     @Override
-    public MobileContact updateMobileContact(long id, MobileContactUpdateDTO dto) throws PhoneNumberAlreadyExistsExeption, UserIdAlreadyExistsExeption, ConcurrentModificationException {
+    public MobileContact updateMobileContact(long id, MobileContactUpdateDTO dto)
+            throws PhoneNumberAlreadyExistsExeption, UserIdAlreadyExistsExeption, ConcurrentModificationException {
         MobileContact mobileContact;
         try{
             mobileContact =  mapFormMobileContactUpdateDTO(dto);
