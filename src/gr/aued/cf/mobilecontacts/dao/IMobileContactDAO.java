@@ -8,6 +8,7 @@ public interface IMobileContactDAO {
     MobileContact insert(MobileContact mobileContact);
     MobileContact update(long id, MobileContact mobileContact);
     void delete(long id);
+    void dlete(String phoneNumber);
 
     MobileContact get(long id);
 
