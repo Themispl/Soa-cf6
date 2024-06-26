@@ -20,7 +20,7 @@ public interface IMobileContactService {
     void  deleteMobileContactByPhoneNumber(String phoneNumber) throws  ContactNotFoundExeption;
 
     MobileContact getMobileContactById(long id) throws ContactNotFoundExeption;
-    MobileContact getMobileContactByPhoneNumber() throws ContactNotFoundExeption;
+    MobileContact getMobileContactByPhoneNumber(String phoneNumber) throws ContactNotFoundExeption;
     List<MobileContact> getAllMobileContacts();
 
 

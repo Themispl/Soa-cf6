@@ -11,6 +11,7 @@ import gr.aued.cf.mobilecontacts.service.exeptions.ContactNotFoundExeption;
 import gr.aued.cf.mobilecontacts.service.exeptions.PhoneNumberAlreadyExistsExeption;
 import gr.aued.cf.mobilecontacts.service.exeptions.UserIdAlreadyExistsExeption;
 
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -55,22 +56,23 @@ public class MobileContactServiceImpl  implements IMobileContactService{
     }
 
     @Override
-    public MobileContact updateMobileContact(long id, MobileContactUpdateDTO dto)
+    public MobileContact updateMobileContact(long id, MobileContactUpdateDTO newdto)
             throws PhoneNumberAlreadyExistsExeption, UserIdAlreadyExistsExeption, ConcurrentModificationException {
         MobileContact mobileContact;
         try{
-            mobileContact =  mapFormMobileContactUpdateDTO(dto);
+            mobileContact =  mapFormMobileContactUpdateDTO(newdto);
 
             if (!dao.userIdExists(id)) {
 
                 throw new ContactNotFoundExeption(id);
             }
 
-            if(dao.phoneNumberExists(mobileContact.getPhoneNumber())){
+            MobileContact oldcontacr =dao.get(id);
+            if(dao.phoneNumberExists(mobileContact.getPhoneNumber()) && (!oldcontacr.getPhoneNumber().equals(newdto.getPhoneNumber()))){
                 throw new PhoneNumberAlreadyExistsExeption(mobileContact);
             }
 
-            if (dao.userIdExists(mobileContact.getId())){
+            if (dao.userIdExists(mobileContact.getId()) && (oldcontacr.getId() != (newdto.getId()))){
                 throw new UserIdAlreadyExistsExeption(mobileContact);
             }
             return dao.update(id,mobileContact);
@@ -81,30 +83,67 @@ public class MobileContactServiceImpl  implements IMobileContactService{
         } catch (ContactNotFoundExeption e) {
             throw new RuntimeException(e);
         }
+
     }
 
     @Override
     public void deleteMobileContactById(long id) throws ContactNotFoundExeption {
+        try {
+            if (!dao.userIdExists(id)) {
 
+                throw new ContactNotFoundExeption(id);
+            }
+            dao.delete(id);
+        }catch (ContactNotFoundExeption e){
+            throw e;
+        }
     }
 
     @Override
     public void deleteMobileContactByPhoneNumber(String phoneNumber) throws ContactNotFoundExeption {
+        try {
+            if (!dao.phoneNumberExists(phoneNumber)) {
 
+                throw new ContactNotFoundExeption(phoneNumber);
+            }
+            dao.delete(Long.parseLong(phoneNumber));
+        }catch (ContactNotFoundExeption e){
+            throw e;
+        }
     }
 
     @Override
     public MobileContact getMobileContactById(long id) throws ContactNotFoundExeption {
-        return null;
+        MobileContact mobileContact;
+        try {
+            mobileContact = dao.get(id);
+            if (mobileContact == null){
+                throw new ContactNotFoundExeption(id);
+            }
+            return mobileContact;
+
+        }catch (ContactNotFoundExeption e){
+            throw e;
+        }
     }
 
     @Override
-    public MobileContact getMobileContactByPhoneNumber() throws ContactNotFoundExeption {
-        return null;
+    public MobileContact getMobileContactByPhoneNumber(String phoneNumber) throws ContactNotFoundExeption {
+        MobileContact mobileContact;
+        try {
+            mobileContact = dao.get(phoneNumber);
+            if (mobileContact == null){
+                throw new ContactNotFoundExeption(phoneNumber);
+            }
+            return mobileContact;
+
+        }catch (ContactNotFoundExeption e){
+            throw e;
+        }
     }
 
     @Override
     public List<MobileContact> getAllMobileContacts() {
-        return null;
+        return dao.getAll(); //Collections.unmodifiableList(dao.getAll());
     }
 }
